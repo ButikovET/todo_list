@@ -1,0 +1,14 @@
+.down_arrow, .color_gray{
+    background-color: none;
+    width: 50px;
+    text-align: center;
+    border: 1px solid #ced4da;
+    font-size: 25px;
+    font-weight: bold;
+    width: 5%;
+    cursor: pointer;
+  }
+  .color_gray{
+      color: lightgray;
+      transform: rotate(180deg);
+  }
