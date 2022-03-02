@@ -5,7 +5,7 @@ import TodoInput from "./TodoInput";
 import TodoTask from "./TodoTask";
 
 const TodoFrame = () => {
-    
+
     const [task, setTask] = useState([]);
     const [remindTask, setRemindTask] = useState(false);
     const [taskText, setTaskText] = useState('');
@@ -13,13 +13,13 @@ const TodoFrame = () => {
     const [showActive, setShowActive] = useState(false);
     const [showCompleted, setShowCompleted] = useState(false);
 
-    const onTextChange = (e) =>{
-        remindTask&&setRemindTask(false);
+    const onTextChange = (e) => {
+        remindTask && setRemindTask(false);
         setTaskText(e.target.value);
     }
 
     const addTask = () => {
-        if (taskText.replace(/ /g,'')) {
+        if (taskText.replace(/ /g, '')) {
             const newTask = { id: Number(new Date()), text: taskText, isDone: false, editMode: false }
             const newTaskArray = [...task];
             newTaskArray.push(newTask);
@@ -32,12 +32,12 @@ const TodoFrame = () => {
         }
     }
 
-    const changeTask = (id, newText) =>{
-        if (newText.replace(/ /g,'')) {
+    const changeTask = (id, newText) => {
+        if (newText.replace(/ /g, '')) {
             const newTaskArray = [...task];
-            newTaskArray.map(el=>{
-                if(el.id===id){
-                    el.text=newText
+            newTaskArray.map(el => {
+                if (el.id === id) {
+                    el.text = newText
                 }
             })
             setTask(newTaskArray);
@@ -47,9 +47,9 @@ const TodoFrame = () => {
     }
 
     const selectAllTasks = () => {
-        const newTaskArray = task.map(el=>{
-            if(!el.isDone){
-                el.isDone=!el.isDone;
+        const newTaskArray = task.map(el => {
+            if (!el.isDone) {
+                el.isDone = !el.isDone;
                 return el;
             }
             else return el;
@@ -58,48 +58,48 @@ const TodoFrame = () => {
         setTask(newTaskArray);
     }
 
-    const changeTaskStatus=(id)=>{
-        remindTask&&setRemindTask(false);
-        const newTaskArray = task.map(el=>{
-            if(el.id==id)el.isDone=!el.isDone
+    const changeTaskStatus = (id) => {
+        remindTask && setRemindTask(false);
+        const newTaskArray = task.map(el => {
+            if (el.id == id) el.isDone = !el.isDone
             return el
         })
         setTask(newTaskArray)
     }
 
-    const changeEditMode=(id)=>{
-        remindTask&&setRemindTask(false);
-        const newTaskArray = task.map(el=>{
-            if(el.id==id)el.editMode=!el.editMode
+    const changeEditMode = (id) => {
+        remindTask && setRemindTask(false);
+        const newTaskArray = task.map(el => {
+            if (el.id == id) el.editMode = !el.editMode
             return el
         })
         setTask(newTaskArray)
     }
 
-    const clearCompleted = () =>{
-        remindTask&&setRemindTask(false);
-        const newTaskArray = task.filter(el=>!el.isDone);
+    const clearCompleted = () => {
+        remindTask && setRemindTask(false);
+        const newTaskArray = task.filter(el => !el.isDone);
         setTask(newTaskArray);
     }
 
-    const deleteSingleTask = (id) =>{
-        remindTask&&setRemindTask(false);
-        const newTaskArray = task.filter(el=>el.id!==id);
+    const deleteSingleTask = (id) => {
+        remindTask && setRemindTask(false);
+        const newTaskArray = task.filter(el => el.id !== id);
         setTask(newTaskArray);
     }
 
-    const onAllShowing=()=>{
+    const onAllShowing = () => {
         setShowAll(true);
         setShowActive(false);
         setShowCompleted(false);
 
     }
-    const onActiveShowing=()=>{
+    const onActiveShowing = () => {
         setShowAll(false);
         setShowActive(true);
         setShowCompleted(false);
     }
-    const onCompletedShowing=()=>{
+    const onCompletedShowing = () => {
         setShowAll(false);
         setShowActive(false);
         setShowCompleted(true);
@@ -107,13 +107,17 @@ const TodoFrame = () => {
 
     return (
         <div className='container py-4 align-items-start col mt-5 '>
-            {remindTask&&<EmptyTaskReminder/>}
+            {remindTask && <EmptyTaskReminder />}
             <h1 className="todos">todos</h1>
-            <TodoInput selectAllTasks={selectAllTasks} addTask={addTask} onTextChange={onTextChange} isAllDone={task.filter(el=>el.isDone).length===task.length} taskText={taskText}/>
+            <TodoInput itemsLength={task.length} selectAllTasks={selectAllTasks} addTask={addTask} onTextChange={onTextChange}
+                isAllDone={task.filter(el => el.isDone).length === task.length} taskText={taskText} />
             <ul className="list-group pt-0">
-                <TodoTask task={task} changeTask={changeTask} taskText={taskText} changeEditMode={changeEditMode} changeTaskStatus={changeTaskStatus} showAll={showAll} showActive={showActive} showCompleted={showCompleted} deleteSingleTask={deleteSingleTask}/>
+                <TodoTask task={task} changeTask={changeTask} taskText={taskText} changeEditMode={changeEditMode}
+                    changeTaskStatus={changeTaskStatus} showAll={showAll} showActive={showActive} showCompleted={showCompleted} deleteSingleTask={deleteSingleTask} />
             </ul>
-            {task.length>0&&<TodoFotter showAll={showAll} showActive={showActive} showCompleted={showCompleted} itemsLength={task.length} activeLength={task.filter(el=>!el.isDone).length} completedLength={task.filter(el=>el.isDone).length} key={task.filter(el=>!el.isDone).length} onAllShowing={onAllShowing} onActiveShowing={onActiveShowing} onCompletedShowing={onCompletedShowing} clearCompleted={clearCompleted}/>}
+            {task.length > 0 && <TodoFotter showAll={showAll} showActive={showActive} showCompleted={showCompleted} itemsLength={task.length}
+                activeLength={task.filter(el => !el.isDone).length} completedLength={task.filter(el => el.isDone).length} key={task.filter(el => !el.isDone).length}
+                onAllShowing={onAllShowing} onActiveShowing={onActiveShowing} onCompletedShowing={onCompletedShowing} clearCompleted={clearCompleted} />}
         </div>
     )
 }
