@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { tasksAPI } from "../api/axiosAPI";
-import EmptyTaskReminder from "./ErrorField/EmptyTaskReminder";
-import TodoFotter from "./TodoFotter";
+import TodoFooter from "./TodoFooter";
 import TodoInput from "./TodoInput";
 import TodoTaskList from "./TodoTaskList";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const TodoFrame = () => {
   const [task, setTask] = useState([]);
@@ -13,7 +14,9 @@ const TodoFrame = () => {
 
   useEffect(() => {
     try {
-      tasksAPI.getAllTasks().then((responce) => setTask(responce.data));
+      toast.promise(tasksAPI.getAllTasks()
+      .then((response) => setTask(response.data)))
+      .catch((error) => toast.error('Can not add new task, server error: ' + error));
     } catch (error) {}
   }, []);
 
@@ -28,24 +31,32 @@ const TodoFrame = () => {
   const addTask = async () => {
     if (taskText.trim()) {
       try {
-        const respocne = await tasksAPI.addTask({ text: taskText });
-        const newTaskArray = [...task, respocne.data];
+        const resposne = await tasksAPI.addTask({ text: taskText });
+        toast.success('New task added');
+        const newTaskArray = [...task, resposne.data];
         setTask(newTaskArray);
-      } catch (error) {}
-    } else setRemindTask(true);
+      } catch (error) {
+        toast.error('Can not add new task, server error: ' + error);
+      }
+    } else toast.warn('Please add some text in new task, spaces will be cutted');
     setTaskText("");
   };
 
-  const changeTask = async (element) => {
+  const changeTask = async (id, change) => { // {id , change}
+    const isCahngedBoolean = typeof(change)==='boolean';
+    console.log(isCahngedBoolean)
     try {
-      await tasksAPI.updateTask(element._id, element);
+      await tasksAPI.updateTask(id, isCahngedBoolean?{isDone:change}:{text:change});
       const newTaskArray = task.map((el) => {
-        if (el._id === element._id) return element;
-        else return el;
+        if (el._id === id) isCahngedBoolean?el.isDone=!el.isDone:el.text=change;
+        return el;
       });
       setTask(newTaskArray);
       setTaskText("");
-    } catch (error) {}
+      toast.success('Task successfully changed');
+    } catch (error) {
+      toast.error('Can not add new task, server error: ' + error);
+    }
   };
 
   const selectAllTasks = async () => {
@@ -53,54 +64,47 @@ const TodoFrame = () => {
     const newTaskArray = task.map((el) => {
       if (activeLength) {
         isSomethingActive = true;
-        return { ...el, isDone: true };
       } else {
         isSomethingActive = false;
-        return { ...el, isDone: false };
       }
+      return { ...el, isDone: isSomethingActive };
     });
     try {
       await tasksAPI.updateAllIsDone({ isDone: isSomethingActive });
-
       setTask(newTaskArray);
-    } catch (error) {}
+    } catch (error) {
+      toast.error('Can not add new task, server error: ' + error);
+    }
   };
 
-  const changeTaskStatus = async (id) => {
-    remindTask && setRemindTask(false);
-    let isDone = false;
-    const newTaskArray = [...task];
-    newTaskArray.map(async (el) => {
-      if (el._id === id) isDone = el.isDone = !el.isDone;
-    });
-    try {
-      await tasksAPI.updateTask(id, { isDone });
-      setTask(newTaskArray);
-    } catch (error) {}
-  };
 
   const clearCompleted = async () => {
     remindTask && setRemindTask(false);
     try {
       await tasksAPI.deleteAllDoneTasks();
+      toast.success('All completed tasks have been deleted');
       const newTaskArray = task.filter((el) => !el.isDone);
       setTask(newTaskArray);
-    } catch (error) {}
+    } catch (error) {
+      toast.error('Can not add new task, server error: ' + error);
+    }
   };
 
   const deleteSingleTask = async (id) => {
     remindTask && setRemindTask(false);
-    console.log(id);
     try {
       await tasksAPI.deleteTask(id);
+      toast.success('Task has been deleted');
       const newTaskArray = task.filter((el) => el._id !== id);
       setTask(newTaskArray);
-    } catch (error) {}
+    } catch (error) {
+      toast.error('Can not add new task, server error: ' + error);
+    }
   };
 
   return (
     <div className="container py-4 align-items-start col mt-5 ">
-      {remindTask && <EmptyTaskReminder />}
+      <ToastContainer />
       <h1 className="todos">todos</h1>
       <TodoInput
         itemsLength={task.length}
@@ -115,12 +119,12 @@ const TodoFrame = () => {
         remindTask={remindTask}
         changeTask={changeTask}
         setRemindTask={setRemindTask}
-        changeTaskStatus={changeTaskStatus}
         deleteSingleTask={deleteSingleTask}
         filter={filter}
+        toast={toast}
       />
       {!!task.length && (
-        <TodoFotter
+        <TodoFooter
           filter={filter}
           setFilter={setFilter}
           itemsLength={task.length}

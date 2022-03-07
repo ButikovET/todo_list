@@ -8,7 +8,8 @@ const TodoTaskList = ({
   deleteSingleTask,
   filter,
   setRemindTask,
-  remindTask
+  remindTask,
+  toast
 }) => {
   return (
     <ul className="list-group pt-0">
@@ -21,13 +22,14 @@ const TodoTaskList = ({
         )
         .map((el) => (
           <TodoTask
+            key={el.id}
             el={el}
+            toast={toast}
             remindTask={remindTask}
             setRemindTask={setRemindTask}
             changeTask={changeTask}
             changeTaskStatus={changeTaskStatus}
             deleteSingleTask={deleteSingleTask}
-            key={el.id}
           />
         ))}
     </ul>

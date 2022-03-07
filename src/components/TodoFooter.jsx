@@ -1,6 +1,6 @@
 import React from "react";
 
-const TodoFotter = ({
+const TodoFooter = ({
   itemsLength,
   activeLength,
   completedLength,
@@ -65,4 +65,4 @@ const TodoFotter = ({
   );
 };
 
-export default TodoFotter;
+export default TodoFooter;

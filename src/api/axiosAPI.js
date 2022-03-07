@@ -19,7 +19,6 @@ export const tasksAPI = {
         return axios.patch(baseURL, isSomethingActive);
     },
     deleteTask(id){
-        console.log(baseURL+id)
         return axios.delete(baseURL+id);
     },
     deleteAllDoneTasks(){

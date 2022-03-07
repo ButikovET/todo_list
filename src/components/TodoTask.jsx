@@ -1,20 +1,25 @@
 import React, { useState } from "react";
 
-const TodoTask = ({ el, changeTask, changeTaskStatus, deleteSingleTask, remindTask, setRemindTask }) => {
+const TodoTask = ({ el, changeTask, toast, deleteSingleTask, remindTask, setRemindTask }) => {
   const [editMode, setEditMode] = useState(false);
   const [editTextData, setEditTextData] = useState(el.text);
 
-  const composeTaskUpdate = (checkbox=false) => {
-    if(editTextData.trim()&&editTextData!==el.text)
-    {
-      changeTask({...el, text:editTextData});
+  const composeTaskUpdate = (event) => {
+    setEditTextData(editTextData.trim());
+    if(event==="onChange"){
+      changeTask(el._id, !el.isDone)
     }
-    else if(checkbox){
-      changeTask({...el, isDone:!el.isDone})
+    else if(editTextData.trim()===el.text.trim()){
+      setEditTextData(el.text);
+      toast.warn('No any changes in task')
+    }
+    else if(editTextData&&editTextData!==el.text)
+    {
+      changeTask(el._id, editTextData);
     }
     else {
       setEditTextData(el.text);
-      setRemindTask(true);
+      toast.warn('Please keep some text in changed task, spaces will be cutted')
     }
     setEditMode(false);
   };
@@ -33,8 +38,8 @@ const TodoTask = ({ el, changeTask, changeTaskStatus, deleteSingleTask, remindTa
         checked={el.isDone}
         value=""
         aria-label="..."
-        onChange={() => {
-          composeTaskUpdate(true);
+        onChange={(el) => {
+          composeTaskUpdate(el._reactName);
         }}
       />
       {editMode ? (
