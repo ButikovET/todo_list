@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { tasksAPI } from "../api/axiosAPI";
 import EmptyTaskReminder from "./ErrorField/EmptyTaskReminder";
 import TodoFotter from "./TodoFotter";
 import TodoInput from "./TodoInput";
@@ -10,6 +11,12 @@ const TodoFrame = () => {
   const [taskText, setTaskText] = useState("");
   const [filter, setFilter] = useState("");
 
+  useEffect(() => {
+    try {
+      tasksAPI.getAllTasks().then((responce) => setTask(responce.data));
+    } catch (error) {}
+  }, []);
+
   const activeLength = task.filter((el) => !el.isDone).length;
   const completedLength = task.length - activeLength;
 
@@ -18,53 +25,77 @@ const TodoFrame = () => {
     setTaskText(e.target.value);
   };
 
-  const addTask = () => {
+  const addTask = async () => {
     if (taskText.trim()) {
-      const newTask = { id: Number(new Date()), text: taskText, isDone: false };
-      const newTaskArray = [...task, newTask];
-      setTask(newTaskArray);
+      try {
+        const respocne = await tasksAPI.addTask({ text: taskText });
+        const newTaskArray = [...task, respocne.data];
+        setTask(newTaskArray);
+      } catch (error) {}
     } else setRemindTask(true);
     setTaskText("");
   };
 
-  const changeTask = (id, newText) => {
-    if (newText.trim()) {
-      const newTaskArray = [...task];
-      newTaskArray.map((el) => {
-        if (el.id === id) el.text = newText;
+  const changeTask = async (element) => {
+    try {
+      await tasksAPI.updateTask(element._id, element);
+      const newTaskArray = task.map((el) => {
+        if (el._id === element._id) return element;
+        else return el;
       });
       setTask(newTaskArray);
       setTaskText("");
-    } else setRemindTask(true);
+    } catch (error) {}
   };
 
-  const selectAllTasks = () => {
+  const selectAllTasks = async () => {
+    let isSomethingActive;
     const newTaskArray = task.map((el) => {
-      if (activeLength) return { ...el, isDone: true };
-      else return { ...el, isDone: false };
+      if (activeLength) {
+        isSomethingActive = true;
+        return { ...el, isDone: true };
+      } else {
+        isSomethingActive = false;
+        return { ...el, isDone: false };
+      }
     });
-    setTask(newTaskArray);
+    try {
+      await tasksAPI.updateAllIsDone({ isDone: isSomethingActive });
+
+      setTask(newTaskArray);
+    } catch (error) {}
   };
 
-  const changeTaskStatus = (id) => {
+  const changeTaskStatus = async (id) => {
     remindTask && setRemindTask(false);
-    const newTaskArray = task.map((el) => {
-      if (el.id === id) return { ...el, isDone: !el.isDone };
-      return el;
+    let isDone = false;
+    const newTaskArray = [...task];
+    newTaskArray.map(async (el) => {
+      if (el._id === id) isDone = el.isDone = !el.isDone;
     });
-    setTask(newTaskArray);
+    try {
+      await tasksAPI.updateTask(id, { isDone });
+      setTask(newTaskArray);
+    } catch (error) {}
   };
 
-  const clearCompleted = () => {
+  const clearCompleted = async () => {
     remindTask && setRemindTask(false);
-    const newTaskArray = task.filter((el) => !el.isDone);
-    setTask(newTaskArray);
+    try {
+      await tasksAPI.deleteAllDoneTasks();
+      const newTaskArray = task.filter((el) => !el.isDone);
+      setTask(newTaskArray);
+    } catch (error) {}
   };
 
-  const deleteSingleTask = (id) => {
+  const deleteSingleTask = async (id) => {
     remindTask && setRemindTask(false);
-    const newTaskArray = task.filter((el) => el.id !== id);
-    setTask(newTaskArray);
+    console.log(id);
+    try {
+      await tasksAPI.deleteTask(id);
+      const newTaskArray = task.filter((el) => el._id !== id);
+      setTask(newTaskArray);
+    } catch (error) {}
   };
 
   return (

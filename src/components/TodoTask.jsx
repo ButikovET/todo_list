@@ -4,10 +4,13 @@ const TodoTask = ({ el, changeTask, changeTaskStatus, deleteSingleTask, remindTa
   const [editMode, setEditMode] = useState(false);
   const [editTextData, setEditTextData] = useState(el.text);
 
-  const composeTaskUpdate = () => {
-    if(editTextData.trim())
+  const composeTaskUpdate = (checkbox=false) => {
+    if(editTextData.trim()&&editTextData!==el.text)
     {
-      changeTask(el.id, editTextData);
+      changeTask({...el, text:editTextData});
+    }
+    else if(checkbox){
+      changeTask({...el, isDone:!el.isDone})
     }
     else {
       setEditTextData(el.text);
@@ -31,7 +34,7 @@ const TodoTask = ({ el, changeTask, changeTaskStatus, deleteSingleTask, remindTa
         value=""
         aria-label="..."
         onChange={() => {
-          changeTaskStatus(el.id);
+          composeTaskUpdate(true);
         }}
       />
       {editMode ? (
@@ -59,7 +62,7 @@ const TodoTask = ({ el, changeTask, changeTaskStatus, deleteSingleTask, remindTa
         className="btn-close position-absolute top-50 end-0 translate-middle-y delete_button"
         aria-label="Close"
         onClick={() => {
-          deleteSingleTask(el.id);
+          deleteSingleTask(el._id);
         }}
       />
     </li>
