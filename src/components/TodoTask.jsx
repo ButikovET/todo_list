@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const TodoTask = ({ el, changeTask, toast, deleteSingleTask, remindTask, setRemindTask }) => {
+const TodoTask = ({ el, changeTask, toast, deleteSingleTask }) => {
   const [editMode, setEditMode] = useState(false);
   const [editTextData, setEditTextData] = useState(el.text);
 
@@ -29,7 +29,6 @@ const TodoTask = ({ el, changeTask, toast, deleteSingleTask, remindTask, setRemi
       className="d-flex list-group-item position-relative pointer rounded-0 task align-items-center p-3 todoTask"
       onDoubleClick={() => {
         setEditMode(true);
-        remindTask&&setRemindTask(false);
       }}
     >
       <input

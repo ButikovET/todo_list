@@ -7,8 +7,6 @@ const TodoTaskList = ({
   changeTaskStatus,
   deleteSingleTask,
   filter,
-  setRemindTask,
-  remindTask,
   toast
 }) => {
   return (
@@ -22,11 +20,9 @@ const TodoTaskList = ({
         )
         .map((el) => (
           <TodoTask
-            key={el.id}
+            key={el._id}
             el={el}
             toast={toast}
-            remindTask={remindTask}
-            setRemindTask={setRemindTask}
             changeTask={changeTask}
             changeTaskStatus={changeTaskStatus}
             deleteSingleTask={deleteSingleTask}

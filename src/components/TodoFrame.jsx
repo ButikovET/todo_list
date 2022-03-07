@@ -5,10 +5,14 @@ import TodoInput from "./TodoInput";
 import TodoTaskList from "./TodoTaskList";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { addTaskThunk, deleteAllCheckedTasksThunk, deleteTaskThunk, getAllTasksThunk, selectAllTasksThunk, updateTaskThunk } from "../redux/todoItemsReducer";
+import { connect } from "react-redux";
 
-const TodoFrame = () => {
+const TodoFrame = (props) => {
+
+  console.log(props)
+
   const [task, setTask] = useState([]);
-  const [remindTask, setRemindTask] = useState(false);
   const [taskText, setTaskText] = useState("");
   const [filter, setFilter] = useState("");
 
@@ -24,7 +28,6 @@ const TodoFrame = () => {
   const completedLength = task.length - activeLength;
 
   const onTextChange = (e) => {
-    remindTask && setRemindTask(false);
     setTaskText(e.target.value);
   };
 
@@ -42,9 +45,8 @@ const TodoFrame = () => {
     setTaskText("");
   };
 
-  const changeTask = async (id, change) => { // {id , change}
+  const changeTask = async (id, change) => {
     const isCahngedBoolean = typeof(change)==='boolean';
-    console.log(isCahngedBoolean)
     try {
       await tasksAPI.updateTask(id, isCahngedBoolean?{isDone:change}:{text:change});
       const newTaskArray = task.map((el) => {
@@ -79,7 +81,6 @@ const TodoFrame = () => {
 
 
   const clearCompleted = async () => {
-    remindTask && setRemindTask(false);
     try {
       await tasksAPI.deleteAllDoneTasks();
       toast.success('All completed tasks have been deleted');
@@ -91,7 +92,6 @@ const TodoFrame = () => {
   };
 
   const deleteSingleTask = async (id) => {
-    remindTask && setRemindTask(false);
     try {
       await tasksAPI.deleteTask(id);
       toast.success('Task has been deleted');
@@ -116,9 +116,7 @@ const TodoFrame = () => {
       />
       <TodoTaskList
         task={task}
-        remindTask={remindTask}
         changeTask={changeTask}
-        setRemindTask={setRemindTask}
         deleteSingleTask={deleteSingleTask}
         filter={filter}
         toast={toast}
@@ -138,4 +136,33 @@ const TodoFrame = () => {
   );
 };
 
-export default TodoFrame;
+const mapStateToProps = (state) =>{
+  return {
+    allTasks: state.todoItemsReducer.todoItems
+  }
+}
+
+const mapDispatchToProps = (dispatch)=>{
+  return {
+    getAllTasks(){
+      dispatch(getAllTasksThunk());
+    },
+    addTask(text){
+      dispatch(addTaskThunk(text));
+    },
+    updateTask(id, change, isChangeBoolean){
+      dispatch(updateTaskThunk(id, change, isChangeBoolean));
+    },
+    deleteTask(id){
+      dispatch(deleteTaskThunk(id));
+    },
+    selectAllTasksThunk(isChecked){
+      dispatch(selectAllTasksThunk(isChecked));
+    },
+    deleteAllDoneTasks(){
+      dispatch(deleteAllCheckedTasksThunk());
+    }
+  }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(TodoFrame);
