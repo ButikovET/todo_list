@@ -1,8 +1,9 @@
 import React from "react";
+import { connect } from "react-redux";
 import TodoTask from "./TodoTask";
 
 const TodoTaskList = ({
-  task,
+  allTasks,
   changeTask,
   changeTaskStatus,
   deleteSingleTask,
@@ -11,7 +12,7 @@ const TodoTaskList = ({
 }) => {
   return (
     <ul className="list-group pt-0">
-      {task
+      {allTasks
         .filter(
           (el) =>
             !filter ||
@@ -32,4 +33,10 @@ const TodoTaskList = ({
   );
 };
 
-export default TodoTaskList;
+const mapStateToProps = (state) =>{
+  return {
+    allTasks: state.todoItemsReducer.todoItems
+  }
+}
+
+export default connect(mapStateToProps)(TodoTaskList);

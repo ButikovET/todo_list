@@ -20,7 +20,7 @@ const TodoInput = ({
       {itemsLength ? (
         <span
           className={
-            isAllDone == 0
+            isAllDone === 0
               ? classes.down_arrow + " " + classes.color_gray
               : classes.down_arrow
           }
