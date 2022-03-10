@@ -4,20 +4,18 @@ import TodoInput from "./TodoInput";
 import TodoTaskList from "./TodoTaskList";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useDispatch, useSelector } from "react-redux";
 import {
+  getAllTasksThunk,
   addTaskThunk,
   deleteAllCheckedTasksThunk,
   deleteTaskThunk,
-  getAllTasksThunk,
   selectAllTasksThunk,
   updateTaskThunk,
-} from "../redux/todoItemsReducer";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
+} from "../redux/todoSlice";
 
 const TodoFrame = () => {
-
-  const allTasks = useSelector(state => state.todoItemsReducer.todoItems);
+  const allTasks = useSelector((state) => state.todoSlice.todoItems);
   const dispatch = useDispatch();
   const [taskText, setTaskText] = useState("");
   const [filter, setFilter] = useState("");
@@ -42,7 +40,12 @@ const TodoFrame = () => {
 
   const changeTask = (id, change) => {
     const isChangeBoolean = typeof change === "boolean";
-    dispatch(updateTaskThunk(id, isChangeBoolean ? { isDone: change } : { text: change }));
+    dispatch(
+      updateTaskThunk({
+        id: id,
+        changes: isChangeBoolean ? { isDone: change } : { text: change },
+      })
+    );
   };
 
   const selectAllTasks = () => {
@@ -54,7 +57,7 @@ const TodoFrame = () => {
   };
 
   const deleteSingleTask = (id) => {
-    dispatch(deleteTaskThunk(id))
+    dispatch(deleteTaskThunk(id));
   };
 
   return (
@@ -70,6 +73,7 @@ const TodoFrame = () => {
         taskText={taskText}
       />
       <TodoTaskList
+        allTasks={allTasks}
         changeTask={changeTask}
         deleteSingleTask={deleteSingleTask}
         filter={filter}
