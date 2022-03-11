@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 const todoSlice = createSlice({
   name: "todos",
   initialState: {
-    todoItems: [],
+    todoItems: [1,2,3]
   },
   extraReducers: (builder) => {
     builder
@@ -38,7 +38,7 @@ const todoSlice = createSlice({
       .addCase(deleteAllCheckedTasksThunk.fulfilled, (state) => {
         state.todoItems = state.todoItems.filter((el) => !el.isDone);
       });
-  },
+  }
 });
 
 export const getAllTasksThunk = createAsyncThunk(

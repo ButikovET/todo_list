@@ -20,6 +20,8 @@ const TodoFrame = () => {
   const [taskText, setTaskText] = useState("");
   const [filter, setFilter] = useState("");
 
+
+
   useEffect(() => {
     dispatch(getAllTasksThunk());
   }, []);
@@ -69,7 +71,7 @@ const TodoFrame = () => {
         selectAllTasks={selectAllTasks}
         addTask={addTask}
         onTextChange={onTextChange}
-        isAllDone={completedLength === allTasks.length}
+        completedLength={completedLength}
         taskText={taskText}
       />
       <TodoTaskList

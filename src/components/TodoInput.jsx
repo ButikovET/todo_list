@@ -6,7 +6,7 @@ const TodoInput = ({
   onTextChange,
   taskText,
   selectAllTasks,
-  isAllDone,
+  completedLength,
   itemsLength,
 }) => {
   return (
@@ -20,7 +20,7 @@ const TodoInput = ({
       {itemsLength ? (
         <span
           className={
-            isAllDone === 0
+            completedLength
               ? classes.down_arrow + " " + classes.color_gray
               : classes.down_arrow
           }
