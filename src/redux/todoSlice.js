@@ -49,7 +49,7 @@ export const getAllTasksThunk = createAsyncThunk(
       return response.data;
     } catch (error) {
       toast.error("Sorry, we cannot load data from server, some error...");
-      throw new Error('Server error');
+      throw new Error('Server error, cannot get tasks');
     }
   }
 );
@@ -63,7 +63,7 @@ export const addTaskThunk = createAsyncThunk(
       return resposne.data;
     } catch (error) {
       toast.error("Can not add new task, server error: " + error);
-      throw new Error('Server error');
+      throw new Error('Server error, can not add new task');
     }
   }
 );
@@ -76,8 +76,8 @@ export const updateTaskThunk = createAsyncThunk(
       toast.success("Task successfully changed");
       return changes;
     } catch (error) {
-      toast.error("Can not add new task, server error: " + error);
-      throw new Error('Server error');
+      toast.error("Can not change task, server error: " + error);
+      throw new Error('Server error, can not update task');
     }
   }
 );
@@ -90,8 +90,8 @@ export const deleteTaskThunk = createAsyncThunk(
       toast.success("Task has been deleted");
       return id;
     } catch (error) {
-      toast.error("Can not add new task, server error: " + error);
-      throw new Error('Server error');
+      toast.error("Can not delete task, server error: " + error);
+      throw new Error('Server error, can not delete task');
     }
   }
 );
@@ -104,8 +104,8 @@ export const selectAllTasksThunk = createAsyncThunk(
       toast.success("All tasks successfully changed");
       return isDone;
     } catch (error) {
-      toast.error("Can not add new task, server error: " + error);
-      throw new Error('Server error');
+      toast.error("Can not change tasks, server error: " + error);
+      throw new Error('Server error, can not change tasks');
     }
   }
 );
@@ -117,8 +117,8 @@ export const deleteAllCheckedTasksThunk = createAsyncThunk(
       await tasksAPI.deleteAllDoneTasks();
       toast.success("All completed tasks have been deleted");
     } catch (error) {
-      toast.error("Can not add new task, server error: " + error);
-      throw new Error('Server error');
+      toast.error("Can not delete tasks, server error: " + error);
+      throw new Error('Server error, can not delete tasks');
     }
   }
 );
