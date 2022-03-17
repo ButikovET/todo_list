@@ -13,7 +13,7 @@ import configureMockStore from "redux-mock-store";
 
 const mockStore = configureMockStore([thunk]);
 
-// ----- Succesfull API calls --------
+// ------- Succesed API calls --------
 describe("When API call is succesfull", () => {
   it("Test should return array of todos", async () => {
     const mockGet = jest.spyOn(axios, "get");
@@ -215,7 +215,8 @@ describe("When API call is succesfull", () => {
   });
 });
 
-// ----- Failed API calls --------
+
+// ------- Failed API calls --------
 describe("When API call fails", () => {
   it("Should throw an Error during getting all todos", async () => {
     const mockGet = jest.spyOn(axios, "get");

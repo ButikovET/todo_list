@@ -1,0 +1,9 @@
+.error_form{
+    border: 1px solid red;
+    padding: 2px;
+}
+.error_form:before{
+    content: 'Form is required';
+    color: red;
+    font-style: italic;
+}

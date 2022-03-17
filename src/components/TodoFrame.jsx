@@ -10,6 +10,7 @@ import {
   addTaskThunk,
   deleteAllCheckedTasksThunk,
   deleteTaskThunk,
+  logOutUserThunk,
   selectAllTasksThunk,
   updateTaskThunk,
 } from "../redux/todoSlice";
@@ -20,11 +21,9 @@ const TodoFrame = () => {
   const [taskText, setTaskText] = useState("");
   const [filter, setFilter] = useState("");
 
-
-
-  useEffect(() => {
-    dispatch(getAllTasksThunk());
-  }, []);
+  useEffect(()=>{
+    dispatch(getAllTasksThunk())
+  },[]);
 
   const activeLength = allTasks.filter((el) => !el.isDone).length;
   const completedLength = allTasks.length - activeLength;
@@ -61,9 +60,13 @@ const TodoFrame = () => {
   const deleteSingleTask = (id) => {
     dispatch(deleteTaskThunk(id));
   };
+  const logOut = () =>{
+    dispatch(logOutUserThunk());
+  }
 
   return (
     <div className="container py-4 align-items-start col mt-5 ">
+      <div className="position-absolute top-0 end-0 m-3 p-3 mb-5 bg-body rounded logButton" onClick={logOut}>Log Out</div>
       <ToastContainer />
       <h1 className="todos">todos</h1>
       <TodoInput

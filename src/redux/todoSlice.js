@@ -1,15 +1,18 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { tasksAPI } from "../api/axiosAPI";
+import { loginAPI, tasksAPI } from "../api/axiosAPI";
 import { toast } from "react-toastify";
 
 const todoSlice = createSlice({
   name: "todos",
   initialState: {
-    todoItems: [1,2,3]
+    todoItems: [],
+    isLoggedIn: false,
+    loginFailed: false
   },
   extraReducers: (builder) => {
     builder
       .addCase(getAllTasksThunk.fulfilled, (state, action) => {
+        if(action.payload)state.isLoggedIn=true;
         state.todoItems = action.payload;
       })
       .addCase(addTaskThunk.fulfilled, (state, action) => {
@@ -37,7 +40,21 @@ const todoSlice = createSlice({
       })
       .addCase(deleteAllCheckedTasksThunk.fulfilled, (state) => {
         state.todoItems = state.todoItems.filter((el) => !el.isDone);
-      });
+      })
+      .addCase(loginUserThunk.fulfilled, (state, action)=>{
+        if(action.payload === "ok"){
+            state.loginFailed = false;
+            state.isLoggedIn = true;
+        }
+        else {
+            state.loginFailed = true;
+            state.isLoggedIn = false;
+        }
+    })
+    .addCase(logOutUserThunk.fulfilled, (state, action)=>{
+        state.isLoggedIn = false;
+        state.loginFailed = false;
+    })
   }
 });
 
@@ -48,8 +65,13 @@ export const getAllTasksThunk = createAsyncThunk(
       const response = await tasksAPI.getAllTasks();
       return response.data;
     } catch (error) {
-      toast.error("Sorry, we cannot load data from server, some error...");
-      throw new Error('Server error, cannot get tasks');
+      const err = (error+"").split(' ');
+      if(err[err.length-1]==="401"){
+      }
+      else{
+        toast.error("Sorry, we cannot load data from server, some error...");
+        throw new Error('Server error, cannot get tasks');
+      }      
     }
   }
 );
@@ -62,6 +84,7 @@ export const addTaskThunk = createAsyncThunk(
       toast.success("New task added");
       return resposne.data;
     } catch (error) {
+      console.log(error)
       toast.error("Can not add new task, server error: " + error);
       throw new Error('Server error, can not add new task');
     }
@@ -122,5 +145,22 @@ export const deleteAllCheckedTasksThunk = createAsyncThunk(
     }
   }
 );
+
+export const loginUserThunk = createAsyncThunk(
+  "todos/loginUserThunk",
+  async ({username, password}) => {
+      try {
+          await loginAPI.logIn(username, password);
+          return 'ok'
+      } catch (error) {
+        toast.error("Oops... Email of password are incorrect. Please try again");
+      }
+  }
+);
+
+export const logOutUserThunk = createAsyncThunk(
+  "todos/logOutUserThunk", () => {}
+);
+
 
 export default todoSlice.reducer;

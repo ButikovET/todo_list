@@ -63,7 +63,7 @@ const TodoTask = ({ el, changeTask, toast, deleteSingleTask }) => {
       )}
       <button
         type="button"
-        className="btn-close position-absolute top-50 end-0 translate-middle-y delete_button"
+        className="btn-close position-absolute top-50 end-0 p-3 translate-middle-y delete_button"
         aria-label="Close"
         onClick={() => {
           deleteSingleTask(el._id);
