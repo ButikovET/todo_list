@@ -16,14 +16,15 @@ import {
 } from "../redux/todoSlice";
 
 const TodoFrame = () => {
-  const allTasks = useSelector((state) => state.todoSlice.todoItems);
+  const allTasks = useSelector((state) => state.todoSlice.todoItems||[]);
+  const name = useSelector((state) => state.todoSlice.name||'');
   const dispatch = useDispatch();
   const [taskText, setTaskText] = useState("");
   const [filter, setFilter] = useState("");
 
   useEffect(()=>{
     dispatch(getAllTasksThunk())
-  },[]);
+  },[name]);
 
   const activeLength = allTasks.filter((el) => !el.isDone).length;
   const completedLength = allTasks.length - activeLength;
@@ -95,6 +96,7 @@ const TodoFrame = () => {
           clearCompleted={clearCompleted}
         />
       )}
+      {name&&<span className="position-absolute bottom-0 end-0 p-3 text-muted">@{name}</span>}
     </div>
   );
 };

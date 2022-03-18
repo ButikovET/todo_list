@@ -14,8 +14,6 @@ function App() {
     dispatch(getAllTasksThunk())
   },[]);
 
-  console.log(isAuth)
-
   return (
     isAuth?<TodoFrame/>:<LoginWindowContainer/>
   );

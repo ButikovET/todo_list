@@ -2,6 +2,8 @@ import axios from "axios";
 
 const todoURL = 'http://localhost:8000/todo/';
 const loginURL = 'http://localhost:8000/login';
+const logoutURL = 'http://localhost:8000/logout';
+const usersURL = 'http://localhost:8000/users';
 axios.defaults.withCredentials = true;
 
 export const tasksAPI = {
@@ -33,6 +35,12 @@ export const loginAPI = {
         return axios.post(loginURL, {username, password});
     },
     logOut(){
-        return axios.post();
+        return axios.post(logoutURL);
+    }
+}
+
+export const usersAPI = {
+    createUser(name, username, password){
+        return axios.post(usersURL, {name, username, password})
     }
 }

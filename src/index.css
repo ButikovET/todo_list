@@ -114,3 +114,9 @@ code {
 .logButton:hover{
   box-shadow: 0px 0px 5px 1px rgb(36, 35, 35);
 }
+.signup{
+  color: rgb(152, 152, 255);
+}
+.signup:hover{
+  color: blue;
+}
