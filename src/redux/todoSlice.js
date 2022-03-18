@@ -182,10 +182,14 @@ export const createUserThunk = createAsyncThunk(
           name +
           ", thank your for registation, now you can login in system"
       );
-      toast.info("Your username: " + username, {autoClose: 999999,
-        hideProgressBar: true,});
-      toast.info("Your password: " + password, {autoClose: 999999,
-        hideProgressBar: true,});
+      toast.info("Your username: " + username, {
+        autoClose: 10 ** 10,
+        hideProgressBar: true,
+      });
+      toast.info("Your password: " + password, {
+        autoClose: 10 ** 10,
+        hideProgressBar: true,
+      });
     } catch (error) {
       toast.error("Can not log out, server error: " + error);
       throw new Error("Server error, can not log out");
