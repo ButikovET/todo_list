@@ -191,7 +191,14 @@ export const createUserThunk = createAsyncThunk(
         hideProgressBar: true,
       });
     } catch (error) {
-      toast.error("Can not log out, server error: " + error);
+      const err = (error + "").split(" ");
+      if (err[err.length - 1] === "500") {
+        toast.error("User with username: '"+username+"' allready exists", {
+          autoClose: 10 ** 10,
+          hideProgressBar: true,
+        });
+      }
+      else toast.error("Can not log out, server error: " + error);
       throw new Error("Server error, can not log out");
     }
   }

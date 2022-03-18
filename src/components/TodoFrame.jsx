@@ -96,7 +96,7 @@ const TodoFrame = () => {
           clearCompleted={clearCompleted}
         />
       )}
-      {name&&<span className="position-absolute bottom-0 end-0 p-3 text-muted">@{name}</span>}
+      {name&&<span className="position-fixed bottom-0 end-0 m-4 text-muted translate-middle-x">@{name}</span>}
     </div>
   );
 };

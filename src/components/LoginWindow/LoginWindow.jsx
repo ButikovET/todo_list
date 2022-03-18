@@ -100,15 +100,15 @@ const LoginWindow = (props) => {
         >
           <h3>Registration</h3>
 
-          <div class="row mb-3">
-            <label for="inputName3" class="col-sm-2 col-form-label">
+          <div className="row mb-3">
+            <label htmlFor="inputName3" className="col-sm-2 col-form-label">
               Name
             </label>
-            <div class="col-sm-10">
+            <div className="col-sm-10">
               <input
-                required="true"
+                required={true}
                 type="text"
-                class="form-control"
+                className="form-control"
                 placeholder="Add your name here"
                 id="inputName3"
                 value={props.name}
@@ -116,14 +116,14 @@ const LoginWindow = (props) => {
               />
             </div>
           </div>
-          <div class="row mb-3">
-            <label for="inputEmail3" class="col-sm-2 col-form-label">
+          <div className="row mb-3">
+            <label htmlFor="inputEmail3" className="col-sm-2 col-form-label">
               Email
             </label>
-            <div class="col-sm-10">
+            <div className="col-sm-10">
               <input
                 type="email"
-                class="form-control"
+                className="form-control"
                 placeholder="Enter your email here"
                 id="inputEmail3"
                 value={props.email}
@@ -131,14 +131,14 @@ const LoginWindow = (props) => {
               />
             </div>
           </div>
-          <div class="row mb-3">
-            <label for="inputPassword3" class="col-sm-2 col-form-label">
+          <div className="row mb-3">
+            <label htmlFor="inputPassword3" className="col-sm-2 col-form-label">
               Password
             </label>
-            <div class="col-sm-10">
+            <div className="col-sm-10">
               <input
                 type="password"
-                class="form-control"
+                className="form-control"
                 placeholder="Create new password here"
                 id="inputPassword3"
                 value={props.password}
@@ -146,16 +146,16 @@ const LoginWindow = (props) => {
               />
             </div>
           </div>
-          <div class="row mb-3">
-            <label for="confirmPassword3" class="col-sm-2 col-form-label">
+          <div className="row mb-3">
+            <label htmlFor="confirmPassword3" className="col-sm-2 col-form-label">
               Confirm Password
             </label>
-            <div class="col-sm-10">
+            <div className="col-sm-10">
               <input
                 value={props.confirmPassword}
                 placeholder="Confirm password here"
                 type="password"
-                class="form-control"
+                className="form-control"
                 id="confirmPassword3"
                 onChange={onConfirmPasswordChange}
               />
@@ -167,7 +167,7 @@ const LoginWindow = (props) => {
           >
             Sign In
           </button>
-          <span className="ms-3">or, if you have an account:</span>
+          <span className="ms-3">or if you have an account:</span>
           <span
             className="btn signup"
             onClick={() => {
