@@ -17,7 +17,7 @@ const mockStore = configureMockStore([thunk]);
 describe("When API call is succesfull", () => {
   it("Test should return array of todos", async () => {
     const mockGet = jest.spyOn(axios, "get");
-    const mockGetResponse = [
+    const mockGetResponse = {todoItems:[
       {
         _id: "123",
         text: "Some Text",
@@ -30,7 +30,7 @@ describe("When API call is succesfull", () => {
         isDone: false,
         __v: 0,
       },
-    ];
+    ]};
     mockGet.mockImplementation(() =>
       Promise.resolve({ data: mockGetResponse })
     );
@@ -41,8 +41,8 @@ describe("When API call is succesfull", () => {
       payload: response.payload,
     });
     expect(response.type).toBe("todos/getAllTasks/fulfilled");
-    expect(response.payload.length).toBe(2);
-    expect(state.todoItems).toEqual(mockGetResponse);
+    expect(response.payload.todoItems.length).toBe(2);
+    expect(state.todoItems).toEqual(mockGetResponse.todoItems);
   });
 
   it("Test should add new todo in empty array", async () => {
@@ -122,6 +122,7 @@ describe("When API call is succesfull", () => {
     });
     const newStore = store.getState();
     newStore.todoItems[0].text = change.changes.text;
+
     expect(response.type).toBe("todos/updateTaskThunk/fulfilled");
     expect(state.todoItems.length).toBe(1);
     expect(state).toEqual(newStore);
