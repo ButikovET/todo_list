@@ -176,7 +176,7 @@ export const createUserThunk = createAsyncThunk(
   "todos/createUserThunk",
   async ({ name, username, password }) => {
     try {
-      await usersAPI.createUser(name, username, password);
+      const response = await usersAPI.createUser(name, username, password);
       toast.success(
         "Dear " +
           name +
@@ -190,6 +190,7 @@ export const createUserThunk = createAsyncThunk(
         autoClose: 10 ** 10,
         hideProgressBar: true,
       });
+      return response.data;
     } catch (error) {
       const err = (error + "").split(" ");
       if (err[err.length - 1] === "500") {

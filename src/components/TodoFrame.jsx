@@ -14,6 +14,7 @@ import {
   selectAllTasksThunk,
   updateTaskThunk,
 } from "../redux/todoSlice";
+import { Button } from "@mui/material";
 
 const TodoFrame = () => {
   const allTasks = useSelector((state) => state.todoSlice.todoItems||[]);
@@ -67,6 +68,7 @@ const TodoFrame = () => {
 
   return (
     <div className="container py-4 align-items-start col mt-5 ">
+      
       <div className="position-absolute top-0 end-0 m-3 p-3 mb-5 bg-body rounded logButton" onClick={logOut}>Log Out</div>
       <ToastContainer />
       <h1 className="todos">todos</h1>

@@ -22,12 +22,10 @@ const LoginWindowContainer = () => {
     if (password !== confirmPassword) {
       toast.error("Password and Confirm password are not equal");
       setConfirmPassword("");
-    }
-    else if(!name.trim()){
-        toast.warn("Field 'Name' is mandatory");
-        setName('');
-    }
-    else dispatch(createUserThunk({ name, username: email, password }))
+    } else if (!name.trim()) {
+      toast.warn("Field 'Name' is mandatory");
+      setName("");
+    } else dispatch(createUserThunk({ name, username: email, password }));
   };
   return (
     <LoginWindow
