@@ -10,8 +10,8 @@ export const tasksAPI = {
     getOneTask(id){
         return axios.get(todoURL + id);
     },
-    getAllTasks(){
-        return axios.get(todoURL);
+    getAllTasks(pageNum,todosInOnePage){
+        return axios.get(todoURL + '?page='+pageNum+'&ammount='+todosInOnePage);
     },
     addTask(text){
         return axios.post(todoURL, text);
@@ -19,14 +19,14 @@ export const tasksAPI = {
     updateTask(id, updates){
         return axios.patch(todoURL+id, updates);
     },
-    updateAllIsDone(isSomethingActive){
-        return axios.patch(todoURL, isSomethingActive);
+    updateAllIsDone(isSomethingActive, currentPage, tasks_id){
+        return axios.patch(todoURL + '?page='+currentPage, {isDone:isSomethingActive, tasks_id});
     },
     deleteTask(id){
         return axios.delete(todoURL+id);
     },
-    deleteAllDoneTasks(){
-        return axios.delete(todoURL);
+    deleteAllDoneTasks(tasks_id){
+        return axios.delete(todoURL, {data:{tasks_id}});
     }
 }
 

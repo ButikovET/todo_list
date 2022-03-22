@@ -15,8 +15,15 @@ code {
   display: inline-block;
   height: 25px;
   width: 25px;
+  top:9px;
+  left:-12.5px;
   background-color: rgb(255, 255, 255);
   border-radius: 50%;
+  transition: 0.5s;
+  z-index: 100;
+}
+.checkbox:checked{
+  left:12.5px;
 }
 .buttonBorder{
   transition: 0.5s;
@@ -27,6 +34,9 @@ code {
 }
 .pointer{
   cursor: pointer;
+}
+.todoText{
+  left: 32px;
 }
 .input_area{
   width: 95%;
@@ -74,6 +84,7 @@ code {
 }
 .delete_button{
   visibility: hidden;
+  margin-right: 25px;
 }
 .todoTask:hover{
   background-color: rgb(249, 249, 253);

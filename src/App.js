@@ -11,7 +11,7 @@ function App() {
   const dispatch = useDispatch();
 
   useEffect(()=>{
-    dispatch(getAllTasksThunk())
+    dispatch(getAllTasksThunk({pageNum:1, todosInOnePage:5}))
   },[]);
 
   return (
