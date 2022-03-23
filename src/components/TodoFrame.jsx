@@ -56,6 +56,15 @@ const TodoFrame = () => {
     );
   };
 
+  const editDateOfCompletion = (id, change) => {
+    dispatch(
+      updateTaskThunk({
+        id: id,
+        changes: { date_to_be_done: change },
+      })
+    );
+  };
+
   const selectAllTasks = () => {
     dispatch(
       selectAllTasksThunk({
@@ -83,12 +92,13 @@ const TodoFrame = () => {
   };
 
   const onPageChange = (e) => {
-    dispatch(
-      getAllTasksThunk({
-        pageNum: Number(e.target.innerText),
-        todosInOnePage: Number(todosInOnePage),
-      })
-    );
+    Number(e.target.innerText) &&
+      dispatch(
+        getAllTasksThunk({
+          pageNum: Number(e.target.innerText),
+          todosInOnePage: Number(todosInOnePage),
+        })
+      );
   };
 
   const onTodoInOnePageChanged = (e) => {
@@ -101,7 +111,7 @@ const TodoFrame = () => {
   };
 
   return (
-    <div className="container py-4 align-items-start col mt-5 ">
+    <div className="container py-4 align-items-start col mt-5">
       <div
         className="position-absolute top-0 end-0 m-3 p-3 mb-5 bg-body rounded logButton"
         onClick={logOut}
@@ -124,6 +134,7 @@ const TodoFrame = () => {
         deleteSingleTask={deleteSingleTask}
         filter={filter}
         toast={toast}
+        editDateOfCompletion={editDateOfCompletion}
       />
       {!!allTasks.length && (
         <TodoFooter
@@ -142,7 +153,7 @@ const TodoFrame = () => {
         />
       )}
       {name && (
-        <span className="position-fixed bottom-0 end-0 m-4 text-muted translate-middle-x">
+        <span className="position-fixed bottom-0 end-0 m-5 text-muted translate-middle-x">
           @{name}
         </span>
       )}

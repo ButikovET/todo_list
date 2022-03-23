@@ -147,7 +147,10 @@ const LoginWindow = (props) => {
             </div>
           </div>
           <div className="row mb-3">
-            <label htmlFor="confirmPassword3" className="col-sm-2 col-form-label">
+            <label
+              htmlFor="confirmPassword3"
+              className="col-sm-2 col-form-label"
+            >
               Confirm Password
             </label>
             <div className="col-sm-10">

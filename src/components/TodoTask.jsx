@@ -7,8 +7,13 @@ import {
 import React, { useState } from "react";
 import BasicDateTimePicker from "./BasicDateTimePicker";
 
-
-const TodoTask = ({ el, changeTask, toast, deleteSingleTask }) => {
+const TodoTask = ({
+  el,
+  changeTask,
+  toast,
+  deleteSingleTask,
+  editDateOfCompletion,
+}) => {
   const [editMode, setEditMode] = useState(false);
   const [editTextData, setEditTextData] = useState(el.text);
 
@@ -28,6 +33,9 @@ const TodoTask = ({ el, changeTask, toast, deleteSingleTask }) => {
       );
     }
     setEditMode(false);
+  };
+  const changeDate = (date) => {
+    editDateOfCompletion(el._id, date);
   };
   return (
     <div className="position-relative">
@@ -49,10 +57,10 @@ const TodoTask = ({ el, changeTask, toast, deleteSingleTask }) => {
               setEditMode(true);
             }}
           >
-            
             <h6 className="p-0 m-0">
               {!el.isDone ? el.text : <del>{el.text}</del>}
             </h6>
+            <span className="date_to_be_done">{el.date_to_be_done}</span>
             <button
               type="button"
               className="btn-close position-absolute top-50 end-0 translate-middle-y delete_button"
@@ -71,7 +79,7 @@ const TodoTask = ({ el, changeTask, toast, deleteSingleTask }) => {
           <input
             resize={"none"}
             disabled={!editMode}
-            className="w-100"
+            className="w-100 p-2"
             type={"text"}
             target={"self"}
             autoFocus={true}
@@ -84,13 +92,19 @@ const TodoTask = ({ el, changeTask, toast, deleteSingleTask }) => {
               setEditTextData(e.target.value);
             }}
           />
-          <Typography className="fst-italic fw-light p-3">
-            - Click on textarea to activate renaming of your Todo Task.
-            <br />
-            - Press "Enter" or click on free page space for closing edit mode.
-            <br />- You can also resize youre area if you planned to write big
-            ammount of text.
-          </Typography>
+          <div className="d-flex align-items-center justify-content-between">
+            <Typography className="fst-italic fw-light p-3">
+              - Click on textarea to activate renaming of your Todo Task.
+              <br />
+              - Press "Enter" or click on free page space for closing edit mode.
+              <br />- You can also resize youre area if you planned to write big
+              ammount of text.
+            </Typography>
+            <BasicDateTimePicker
+              date_to_be_done={el.date_to_be_done}
+              changeDate={changeDate}
+            />
+          </div>
         </AccordionDetails>
       </Accordion>
     </div>

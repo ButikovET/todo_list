@@ -1,22 +1,23 @@
-// import * as React from 'react';
-// import TextField from '@mui/material/TextField';
-// import AdapterDateFns from '@mui/lab/AdapterDateFns';
-// import LocalizationProvider from '@mui/lab/LocalizationProvider';
-// import DateTimePicker from '@mui/lab/DateTimePicker';
+import * as React from "react";
+import TextField from "@mui/material/TextField";
+import Stack from "@mui/material/Stack";
 
-// export default function BasicDateTimePicker() {
-//   const [value, setValue] = React.useState(new Date());
-
-//   return (
-//     <LocalizationProvider dateAdapter={AdapterDateFns}>
-//       <DateTimePicker
-//         renderInput={(props) => <TextField {...props} />}
-//         label="DateTimePicker"
-//         value={value}
-//         onChange={(newValue) => {
-//           setValue(newValue);
-//         }}
-//       />
-//     </LocalizationProvider>
-//   );
-// }
+export default function NativePickers({ changeDate, date_to_be_done }) {
+  return (
+    <Stack component="form" noValidate spacing={3}>
+      <TextField
+        id="date"
+        label="To be done"
+        type="date"
+        sx={{ width: 220 }}
+        InputLabelProps={{
+          shrink: true,
+        }}
+        defaultValue={date_to_be_done != "not limited" ? date_to_be_done : ""}
+        onChange={(e) => {
+          changeDate(e.target.value);
+        }}
+      />
+    </Stack>
+  );
+}

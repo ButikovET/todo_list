@@ -56,9 +56,7 @@ const TodoFooter = ({
         count={totalPages}
         page={Number(currentPage)}
         color="primary"
-        className="p-1 border rounded"
         onClick={onPageChange}
-        hidePrevButton hideNextButton
       />
       <div className="d-flex align-self-center justify-content-center">
         <div
