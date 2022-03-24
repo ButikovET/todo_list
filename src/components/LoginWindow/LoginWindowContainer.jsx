@@ -11,6 +11,7 @@ const LoginWindowContainer = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [photo, setPhoto] = useState("");
 
   const onLogIn = (e) => {
     e.preventDefault();
@@ -22,12 +23,20 @@ const LoginWindowContainer = () => {
     if (password !== confirmPassword) {
       toast.error("Password and Confirm password are not equal");
       setConfirmPassword("");
+    } else if (!name.trim()) {
+      toast.warn("Field 'Name' is mandatory");
+      setName("");
+    } else {
+      const  reader = new FileReader();
+      reader.onload = (e) => {
+        dispatch(createUserThunk({ name, username: email, password, photo:e.target.result }))
+        console.log(e.target.result);
+      };
+      reader.onerror = (e) => {
+        console.log("Error : " + e.type);
+      };
+      reader.readAsBinaryString(photo)
     }
-    else if(!name.trim()){
-        toast.warn("Field 'Name' is mandatory");
-        setName('');
-    }
-    else dispatch(createUserThunk({ name, username: email, password }))
   };
   return (
     <LoginWindow
@@ -41,6 +50,7 @@ const LoginWindowContainer = () => {
       setConfirmPassword={setConfirmPassword}
       onLogIn={onLogIn}
       signUpUser={signUpUser}
+      setPhoto={setPhoto}
     />
   );
 };

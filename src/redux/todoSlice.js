@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { loginAPI, tasksAPI, usersAPI } from "../api/axiosAPI";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 const todoSlice = createSlice({
   name: "todos",
@@ -8,7 +9,11 @@ const todoSlice = createSlice({
     todoItems: [],
     isLoggedIn: false,
     loginFailed: false,
-    name: "",
+    totalPages: 1,
+    currentPage: 1,
+    todosInOnePage: 5,
+    totalItems: 0,
+    name: ""
   },
   extraReducers: (builder) => {
     builder
@@ -17,10 +22,19 @@ const todoSlice = createSlice({
           state.isLoggedIn = true;
           state.todoItems = action.payload.todoItems;
           state.name = action.payload.name;
+          state.totalPages = action.payload.totalPages;
+          state.currentPage = action.payload.currentPage;
+          state.todosInOnePage = action.payload.todosInOnePage;
         }
       })
       .addCase(addTaskThunk.fulfilled, (state, action) => {
-        state.todoItems = [...state.todoItems, action.payload];
+        const newArray = [...state.todoItems];
+        newArray.unshift(action.payload.newItem);
+        if (newArray.length > state.todosInOnePage) newArray.pop();
+        state.todoItems = newArray;
+        state.totalPages = Math.ceil(
+          action.payload.totalItems / state.todosInOnePage
+        );
       })
       .addCase(updateTaskThunk.fulfilled, (state, action) => {
         const newTaskArray = state.todoItems.map((el) => {
@@ -28,11 +42,17 @@ const todoSlice = createSlice({
             ? { ...el, ...action.payload.changes }
             : el;
         });
+        newTaskArray.sort(function(a,b){
+          return new Date(b.updatedAt) - new Date(a.updatedAt)
+        })
         state.todoItems = newTaskArray;
       })
       .addCase(deleteTaskThunk.fulfilled, (state, action) => {
         state.todoItems = state.todoItems.filter(
-          (el) => el._id !== action.payload
+          (el) => el._id !== action.payload.deletedItem._id
+        );
+        state.totalPages = Math.ceil(
+          action.payload.totalItems / state.todosInOnePage
         );
       })
       .addCase(selectAllTasksThunk.fulfilled, (state, action) => {
@@ -42,11 +62,14 @@ const todoSlice = createSlice({
         });
         state.todoItems = newTaskArray;
       })
-      .addCase(deleteAllCheckedTasksThunk.fulfilled, (state) => {
+      .addCase(deleteAllCheckedTasksThunk.fulfilled, (state, action) => {
         state.todoItems = state.todoItems.filter((el) => !el.isDone);
+        state.totalPages = Math.ceil(
+          action.payload.totalItems / state.todosInOnePage
+        );
       })
       .addCase(loginUserThunk.fulfilled, (state, action) => {
-        if (action.payload === "ok") {
+        if (action.payload) {
           state.loginFailed = false;
           state.isLoggedIn = true;
         } else {
@@ -57,15 +80,19 @@ const todoSlice = createSlice({
       .addCase(logOutUserThunk.fulfilled, (state) => {
         state.isLoggedIn = false;
         state.loginFailed = false;
-      });
+        state.totalPages = 1;
+      })
+      .addCase(updateUserThunk.fulfilled, (state, action) =>{
+        state.name = action.payload.name;
+      })
   },
 });
 
 export const getAllTasksThunk = createAsyncThunk(
   "todos/getAllTasks",
-  async () => {
+  async ({ pageNum, todosInOnePage }) => {
     try {
-      const response = await tasksAPI.getAllTasks();
+      const response = await tasksAPI.getAllTasks(pageNum, todosInOnePage);
       return response.data;
     } catch (error) {
       const err = (error + "").split(" ");
@@ -81,9 +108,9 @@ export const getAllTasksThunk = createAsyncThunk(
 
 export const addTaskThunk = createAsyncThunk(
   "todos/addTaskThunk",
-  async (text) => {
+  async (text, pageNum) => {
     try {
-      const resposne = await tasksAPI.addTask({ text });
+      const resposne = await tasksAPI.addTask({ text, pageNum });
       toast.success("New task added");
       return resposne.data;
     } catch (error) {
@@ -111,9 +138,9 @@ export const deleteTaskThunk = createAsyncThunk(
   "todos/deleteTaskThunk",
   async (id) => {
     try {
-      await tasksAPI.deleteTask(id);
+      const response = await tasksAPI.deleteTask(id);
       toast.success("Task has been deleted");
-      return id;
+      return response.data;
     } catch (error) {
       toast.error("Can not delete task, server error: " + error);
       throw new Error("Server error, can not delete task");
@@ -123,9 +150,9 @@ export const deleteTaskThunk = createAsyncThunk(
 
 export const selectAllTasksThunk = createAsyncThunk(
   "todos/selectAllTasksThunk",
-  async (isDone) => {
+  async ({ isDone, currentPage, tasks_id }) => {
     try {
-      await tasksAPI.updateAllIsDone({ isDone });
+      await tasksAPI.updateAllIsDone(isDone, currentPage, tasks_id);
       toast.success("All tasks successfully changed");
       return isDone;
     } catch (error) {
@@ -137,10 +164,11 @@ export const selectAllTasksThunk = createAsyncThunk(
 
 export const deleteAllCheckedTasksThunk = createAsyncThunk(
   "todos/deleteAllCheckedTasksThunk",
-  async () => {
+  async (tasks_id) => {
     try {
-      await tasksAPI.deleteAllDoneTasks();
+      const response = await tasksAPI.deleteAllDoneTasks(tasks_id);
       toast.success("All completed tasks have been deleted");
+      return response.data;
     } catch (error) {
       toast.error("Can not delete tasks, server error: " + error);
       throw new Error("Server error, can not delete tasks");
@@ -152,8 +180,10 @@ export const loginUserThunk = createAsyncThunk(
   "todos/loginUserThunk",
   async ({ username, password }) => {
     try {
-      await loginAPI.logIn(username, password);
-      return "ok";
+      const response = await loginAPI.logIn(username, password);
+      localStorage.setItem('todo_photo', 'data:image/jpeg;base64,'+ btoa(response.data.photo));
+      localStorage.setItem('todo_cropped_photo', 'data:image/jpeg;base64,'+ btoa(response.data.croppedPhoto));
+      return response.data;
     } catch (error) {
       toast.error("Oops... Email of password are incorrect. Please try again");
     }
@@ -174,9 +204,9 @@ export const logOutUserThunk = createAsyncThunk(
 
 export const createUserThunk = createAsyncThunk(
   "todos/createUserThunk",
-  async ({ name, username, password }) => {
+  async ({ name, username, password, photo }) => {
     try {
-      await usersAPI.createUser(name, username, password);
+      const response = await usersAPI.createUser(name, username, password, photo);
       toast.success(
         "Dear " +
           name +
@@ -190,18 +220,31 @@ export const createUserThunk = createAsyncThunk(
         autoClose: 10 ** 10,
         hideProgressBar: true,
       });
+      return response.data;
     } catch (error) {
       const err = (error + "").split(" ");
       if (err[err.length - 1] === "500") {
-        toast.error("User with username: '"+username+"' allready exists", {
+        toast.error("User with username: '" + username + "' allready exists", {
           autoClose: 10 ** 10,
           hideProgressBar: true,
         });
-      }
-      else toast.error("Can not log out, server error: " + error);
+      } else toast.error("Can not log out, server error: " + error);
       throw new Error("Server error, can not log out");
     }
   }
 );
+
+export const updateUserThunk = createAsyncThunk(
+  'todos/updateUserThunk',
+  async (updates) => {
+    try {
+      const response = await usersAPI.updateUser(updates);
+      toast.success('Your data updated successfully')
+      return response.data
+    } catch (error) {
+      toast.err('Can not update data, server error')
+    }
+  }
+)
 
 export default todoSlice.reducer;

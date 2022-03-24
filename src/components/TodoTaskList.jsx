@@ -7,7 +7,8 @@ const TodoTaskList = ({
   changeTaskStatus,
   deleteSingleTask,
   filter,
-  toast
+  toast,
+  editDateOfCompletion,
 }) => {
   return (
     <ul className="list-group pt-0">
@@ -15,8 +16,8 @@ const TodoTaskList = ({
         .filter(
           (el) =>
             !filter ||
-            (filter==='active' && !el.isDone) ||
-            (filter==='completed' && el.isDone)
+            (filter === "active" && !el.isDone) ||
+            (filter === "completed" && el.isDone)
         )
         .map((el) => (
           <TodoTask
@@ -26,6 +27,7 @@ const TodoTaskList = ({
             changeTask={changeTask}
             changeTaskStatus={changeTaskStatus}
             deleteSingleTask={deleteSingleTask}
+            editDateOfCompletion={editDateOfCompletion}
           />
         ))}
     </ul>

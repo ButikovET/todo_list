@@ -1,9 +1,12 @@
 import expect from "expect";
 import todoSlice, {
   addTaskThunk,
+  createUserThunk,
   deleteAllCheckedTasksThunk,
   deleteTaskThunk,
   getAllTasksThunk,
+  loginUserThunk,
+  logOutUserThunk,
   selectAllTasksThunk,
   updateTaskThunk,
 } from "./todoSlice";
@@ -17,20 +20,22 @@ const mockStore = configureMockStore([thunk]);
 describe("When API call is succesfull", () => {
   it("Test should return array of todos", async () => {
     const mockGet = jest.spyOn(axios, "get");
-    const mockGetResponse = {todoItems:[
-      {
-        _id: "123",
-        text: "Some Text",
-        isDone: false,
-        __v: 0,
-      },
-      {
-        _id: "ssdas212uh3344221",
-        text: "text2",
-        isDone: false,
-        __v: 0,
-      },
-    ]};
+    const mockGetResponse = {
+      todoItems: [
+        {
+          _id: "123",
+          text: "Some Text",
+          isDone: false,
+          __v: 0,
+        },
+        {
+          _id: "ssdas212uh3344221",
+          text: "text2",
+          isDone: false,
+          __v: 0,
+        },
+      ],
+    };
     mockGet.mockImplementation(() =>
       Promise.resolve({ data: mockGetResponse })
     );
@@ -214,8 +219,98 @@ describe("When API call is succesfull", () => {
       ],
     });
   });
-});
 
+  it("Should add new User", async () => {
+    const mockGet = jest.spyOn(axios, "post");
+    const mockResponce = {
+      password: "$2b$10$cfa5tL5yPaEWC2XnbiZF/O9UxJmYi4wh4fWv/2EaHiKNHdLuH7aYe",
+      username: "bob@bob.bob",
+      name: "bob",
+      _id: "623827a5795bb903b9f6fc1f",
+      __v: 0,
+    };
+    mockGet.mockImplementation(() => Promise.resolve({ data: mockResponce }));
+    const store = mockStore({
+      todoItems: [],
+      isLoggedIn: false,
+      loginFailed: false,
+      name: "",
+    });
+
+    const response = await store.dispatch(
+      createUserThunk({
+        password: "123",
+        username: "bob@bob.bob",
+        name: "bob",
+      })
+    );
+    const state = todoSlice(store.getState(), {
+      type: response.type,
+      payload: response.payload,
+    });
+    expect(response.type).toBe("todos/createUserThunk/fulfilled");
+    expect(response.payload).toBe(mockResponce);
+  });
+
+  it("Should Login in system", async () => {
+    const mockGet = jest.spyOn(axios, "post");
+    const mockResponce = {
+      message: "Login successful",
+      name: "bob",
+    };
+    mockGet.mockImplementation(() => Promise.resolve({ data: mockResponce }));
+    const store = mockStore({
+      todoItems: [],
+      isLoggedIn: false,
+      loginFailed: false,
+      name: "",
+    });
+
+    const response = await store.dispatch(
+      loginUserThunk({
+        password: "123",
+        username: "bob@bob.bob",
+      })
+    );
+    const state = todoSlice(store.getState(), {
+      type: response.type,
+      payload: response.payload,
+    });
+    expect(response.type).toBe("todos/loginUserThunk/fulfilled");
+    expect(response.payload).toBe("ok");
+  });
+
+  it("Should log out from system", async () => {
+    const mockGet = jest.spyOn(axios, "post");
+    const mockResponce = {
+      message: "Login successful",
+      name: "bob",
+    };
+    mockGet.mockImplementation(() => Promise.resolve({ data: mockResponce }));
+    const store = mockStore({
+      todoItems: [
+        {
+          _id: "123",
+          text: "Hello",
+          author_id: "12347238ryf",
+          isDone: true,
+          __v: "0",
+        },
+      ],
+      isLoggedIn: true,
+      loginFailed: false,
+      name: "bob",
+    });
+
+    const response = await store.dispatch(logOutUserThunk());
+    const state = todoSlice(store.getState(), {
+      type: response.type,
+      payload: response.payload,
+    });
+    expect(response.type).toBe("todos/logOutUserThunk/fulfilled");
+    expect(response.payload).toBe(undefined);
+  });
+});
 
 // ------- Failed API calls --------
 describe("When API call fails", () => {

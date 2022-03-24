@@ -20,7 +20,7 @@ const TodoInput = ({
       {itemsLength ? (
         <span
           className={
-            completedLength
+            !(itemsLength > completedLength)
               ? classes.down_arrow + " " + classes.color_gray
               : classes.down_arrow
           }

@@ -14,17 +14,24 @@ import {
   selectAllTasksThunk,
   updateTaskThunk,
 } from "../redux/todoSlice";
+import TodoProfile from "./TodoProfile";
 
 const TodoFrame = () => {
-  const allTasks = useSelector((state) => state.todoSlice.todoItems||[]);
-  const name = useSelector((state) => state.todoSlice.name||'');
+  const allTasks = useSelector((state) => state.todoSlice.todoItems || []);
+  const name = useSelector((state) => state.todoSlice.name || "");
+  const totalPages = useSelector((state) => state.todoSlice.totalPages || 1);
+  const currentPage = useSelector((state) => state.todoSlice.currentPage || 1);
+  const todosInOnePage = useSelector(
+    (state) => state.todoSlice.todosInOnePage || 5
+  );
+
   const dispatch = useDispatch();
   const [taskText, setTaskText] = useState("");
   const [filter, setFilter] = useState("");
 
-  useEffect(()=>{
-    dispatch(getAllTasksThunk())
-  },[name]);
+  useEffect(() => {
+    dispatch(getAllTasksThunk({pageNum:1, todosInOnePage:5}));
+  }, []);
 
   const activeLength = allTasks.filter((el) => !el.isDone).length;
   const completedLength = allTasks.length - activeLength;
@@ -50,24 +57,69 @@ const TodoFrame = () => {
     );
   };
 
+  const editDateOfCompletion = (id, change) => {
+    dispatch(
+      updateTaskThunk({
+        id: id,
+        changes: { date_to_be_done: change },
+      })
+    );
+  };
+
   const selectAllTasks = () => {
-    dispatch(selectAllTasksThunk(activeLength ? true : false));
+    dispatch(
+      selectAllTasksThunk({
+        isDone: activeLength ? true : false,
+        currentPage,
+        tasks_id: allTasks.map((el) => el._id),
+      })
+    );
   };
 
-  const clearCompleted = () => {
-    dispatch(deleteAllCheckedTasksThunk());
+  const clearCompleted = async () => {
+    const tasks_id = allTasks.filter((el) => el.isDone).map((el) => el._id);
+    await dispatch(deleteAllCheckedTasksThunk(tasks_id));
+    if (tasks_id.length === allTasks.length)
+      dispatch(getAllTasksThunk({ pageNum: 1, todosInOnePage }));
   };
 
-  const deleteSingleTask = (id) => {
-    dispatch(deleteTaskThunk(id));
+  const deleteSingleTask = async (id) => {
+    await dispatch(deleteTaskThunk(id));
+    if (allTasks.length === 1)
+      dispatch(getAllTasksThunk({ pageNum: 1, todosInOnePage }));
   };
-  const logOut = () =>{
+  const logOut = () => {
     dispatch(logOutUserThunk());
-  }
+  };
+
+  const onPageChange = (e) => {
+    Number(e.target.innerText) &&
+      dispatch(
+        getAllTasksThunk({
+          pageNum: Number(e.target.innerText),
+          todosInOnePage: Number(todosInOnePage),
+        })
+      );
+  };
+
+  const onTodoInOnePageChanged = (e) => {
+    dispatch(
+      getAllTasksThunk({
+        pageNum: Number(e.target.value<Number(todosInOnePage))?Number(currentPage):1,
+        todosInOnePage: Number(e.target.value),
+      })
+    );
+  };
 
   return (
-    <div className="container py-4 align-items-start col mt-5 ">
-      <div className="position-absolute top-0 end-0 m-3 p-3 mb-5 bg-body rounded logButton" onClick={logOut}>Log Out</div>
+    <div className="position relative container py-4 align-items-start col mt-5">
+      <TodoProfile name={name}/>
+      <div
+        className="position-fixed top-0 end-0 m-3 p-3 mb-5 bg-body rounded logButton"
+        onClick={logOut}
+      >
+        Log Out
+      </div>
       <ToastContainer />
       <h1 className="todos">todos</h1>
       <TodoInput
@@ -84,6 +136,7 @@ const TodoFrame = () => {
         deleteSingleTask={deleteSingleTask}
         filter={filter}
         toast={toast}
+        editDateOfCompletion={editDateOfCompletion}
       />
       {!!allTasks.length && (
         <TodoFooter
@@ -94,9 +147,18 @@ const TodoFrame = () => {
           completedLength={completedLength}
           key={allTasks.length}
           clearCompleted={clearCompleted}
+          onPageChange={onPageChange}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          todosInOnePage={todosInOnePage}
+          onTodoInOnePageChanged={onTodoInOnePageChanged}
         />
       )}
-      {name&&<span className="position-fixed bottom-0 end-0 m-4 text-muted translate-middle-x">@{name}</span>}
+      {name && (
+        <span className="position-fixed bottom-0 end-0 m-5 text-muted translate-middle-x">
+          @{name}
+        </span>
+      )}
     </div>
   );
 };
