@@ -11,10 +11,10 @@ function srcset(image, size, rows = 1, cols = 1) {
   };
 }
 
-export default function QuiltedImageList() {
+export default function QuiltedImageList({isAuth}) {
   return (
     <ImageList
-      className="position-fixed backgroundImage bottom-0 start-50 translate-middle-x w-100 h-100 pt-5 opacity-25"
+      className={isAuth?"position-fixed backgroundImage bottom-0 start-50 translate-middle-x p-5 pb-0":"position-fixed backgroundImage bottom-0 start-50 translate-middle-x p-5 pb-0 opacity-75"}
       variant="quilted"
       cols={8}
       rowHeight={121}

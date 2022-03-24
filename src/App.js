@@ -17,7 +17,7 @@ function App() {
 
   return (
       <>
-        <QuiltedImageList/>
+        <QuiltedImageList isAuth={isAuth} />
         {isAuth?<TodoFrame/>:<LoginWindowContainer/>}
       </>
   );

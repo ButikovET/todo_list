@@ -4,7 +4,6 @@ import { useDispatch } from "react-redux";
 import { loginUserThunk, createUserThunk } from "../../redux/todoSlice";
 import LoginWindow from "./LoginWindow";
 import { toast } from "react-toastify";
-import QuiltedImageList from "./ImageList";
 
 const LoginWindowContainer = () => {
   const dispatch = useDispatch();
@@ -12,6 +11,7 @@ const LoginWindowContainer = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [photo, setPhoto] = useState("");
 
   const onLogIn = (e) => {
     e.preventDefault();
@@ -26,7 +26,17 @@ const LoginWindowContainer = () => {
     } else if (!name.trim()) {
       toast.warn("Field 'Name' is mandatory");
       setName("");
-    } else dispatch(createUserThunk({ name, username: email, password }));
+    } else {
+      const  reader = new FileReader();
+      reader.onload = (e) => {
+        dispatch(createUserThunk({ name, username: email, password, photo:e.target.result }))
+        console.log(e.target.result);
+      };
+      reader.onerror = (e) => {
+        console.log("Error : " + e.type);
+      };
+      reader.readAsBinaryString(photo)
+    }
   };
   return (
     <LoginWindow
@@ -40,6 +50,7 @@ const LoginWindowContainer = () => {
       setConfirmPassword={setConfirmPassword}
       onLogIn={onLogIn}
       signUpUser={signUpUser}
+      setPhoto={setPhoto}
     />
   );
 };

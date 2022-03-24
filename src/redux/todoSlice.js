@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { loginAPI, tasksAPI, usersAPI } from "../api/axiosAPI";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 const todoSlice = createSlice({
   name: "todos",
@@ -12,7 +13,7 @@ const todoSlice = createSlice({
     currentPage: 1,
     todosInOnePage: 5,
     totalItems: 0,
-    name: "",
+    name: ""
   },
   extraReducers: (builder) => {
     builder
@@ -68,7 +69,7 @@ const todoSlice = createSlice({
         );
       })
       .addCase(loginUserThunk.fulfilled, (state, action) => {
-        if (action.payload === "ok") {
+        if (action.payload) {
           state.loginFailed = false;
           state.isLoggedIn = true;
         } else {
@@ -79,7 +80,11 @@ const todoSlice = createSlice({
       .addCase(logOutUserThunk.fulfilled, (state) => {
         state.isLoggedIn = false;
         state.loginFailed = false;
-      });
+        state.totalPages = 1;
+      })
+      .addCase(updateUserThunk.fulfilled, (state, action) =>{
+        state.name = action.payload.name;
+      })
   },
 });
 
@@ -175,8 +180,10 @@ export const loginUserThunk = createAsyncThunk(
   "todos/loginUserThunk",
   async ({ username, password }) => {
     try {
-      await loginAPI.logIn(username, password);
-      return "ok";
+      const response = await loginAPI.logIn(username, password);
+      localStorage.setItem('todo_photo', 'data:image/jpeg;base64,'+ btoa(response.data.photo));
+      localStorage.setItem('todo_cropped_photo', 'data:image/jpeg;base64,'+ btoa(response.data.croppedPhoto));
+      return response.data;
     } catch (error) {
       toast.error("Oops... Email of password are incorrect. Please try again");
     }
@@ -197,9 +204,9 @@ export const logOutUserThunk = createAsyncThunk(
 
 export const createUserThunk = createAsyncThunk(
   "todos/createUserThunk",
-  async ({ name, username, password }) => {
+  async ({ name, username, password, photo }) => {
     try {
-      const response = await usersAPI.createUser(name, username, password);
+      const response = await usersAPI.createUser(name, username, password, photo);
       toast.success(
         "Dear " +
           name +
@@ -226,5 +233,18 @@ export const createUserThunk = createAsyncThunk(
     }
   }
 );
+
+export const updateUserThunk = createAsyncThunk(
+  'todos/updateUserThunk',
+  async (updates) => {
+    try {
+      const response = await usersAPI.updateUser(updates);
+      toast.success('Your data updated successfully')
+      return response.data
+    } catch (error) {
+      toast.err('Can not update data, server error')
+    }
+  }
+)
 
 export default todoSlice.reducer;

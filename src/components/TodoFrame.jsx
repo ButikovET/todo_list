@@ -14,6 +14,7 @@ import {
   selectAllTasksThunk,
   updateTaskThunk,
 } from "../redux/todoSlice";
+import TodoProfile from "./TodoProfile";
 
 const TodoFrame = () => {
   const allTasks = useSelector((state) => state.todoSlice.todoItems || []);
@@ -29,8 +30,8 @@ const TodoFrame = () => {
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    dispatch(getAllTasksThunk({ pageNum: currentPage, todosInOnePage }));
-  }, [name]);
+    dispatch(getAllTasksThunk({pageNum:1, todosInOnePage:5}));
+  }, []);
 
   const activeLength = allTasks.filter((el) => !el.isDone).length;
   const completedLength = allTasks.length - activeLength;
@@ -104,16 +105,17 @@ const TodoFrame = () => {
   const onTodoInOnePageChanged = (e) => {
     dispatch(
       getAllTasksThunk({
-        pageNum: Number(currentPage),
+        pageNum: Number(e.target.value<Number(todosInOnePage))?Number(currentPage):1,
         todosInOnePage: Number(e.target.value),
       })
     );
   };
 
   return (
-    <div className="container py-4 align-items-start col mt-5">
+    <div className="position relative container py-4 align-items-start col mt-5">
+      <TodoProfile name={name}/>
       <div
-        className="position-absolute top-0 end-0 m-3 p-3 mb-5 bg-body rounded logButton"
+        className="position-fixed top-0 end-0 m-3 p-3 mb-5 bg-body rounded logButton"
         onClick={logOut}
       >
         Log Out

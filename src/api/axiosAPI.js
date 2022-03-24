@@ -40,7 +40,11 @@ export const loginAPI = {
 }
 
 export const usersAPI = {
-    createUser(name, username, password){
-        return axios.post(usersURL, {name, username, password})
+    createUser(name, username, password, photo){
+        return axios.post(usersURL, {name, username, password, photo});
+    },
+    updateUser(updates){
+        console.log(updates)
+        return axios.patch(usersURL, {...updates});
     }
 }

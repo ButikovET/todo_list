@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import DragDrop from "./DragDrop";
 
 const LoginWindow = (props) => {
   const onNameChange = (e) => {
@@ -102,7 +103,7 @@ const LoginWindow = (props) => {
 
           <div className="row mb-3">
             <label htmlFor="inputName3" className="col-sm-2 col-form-label">
-              Name
+              Name*
             </label>
             <div className="col-sm-10">
               <input
@@ -118,7 +119,7 @@ const LoginWindow = (props) => {
           </div>
           <div className="row mb-3">
             <label htmlFor="inputEmail3" className="col-sm-2 col-form-label">
-              Email
+              Email*
             </label>
             <div className="col-sm-10">
               <input
@@ -133,7 +134,7 @@ const LoginWindow = (props) => {
           </div>
           <div className="row mb-3">
             <label htmlFor="inputPassword3" className="col-sm-2 col-form-label">
-              Password
+              Password*
             </label>
             <div className="col-sm-10">
               <input
@@ -151,7 +152,7 @@ const LoginWindow = (props) => {
               htmlFor="confirmPassword3"
               className="col-sm-2 col-form-label"
             >
-              Confirm Password
+              Confirm Password*
             </label>
             <div className="col-sm-10">
               <input
@@ -162,7 +163,17 @@ const LoginWindow = (props) => {
                 id="confirmPassword3"
                 onChange={onConfirmPasswordChange}
               />
-            </div>
+            </div>           
+          </div>
+          <div className="row mb-3">
+          <label
+              htmlFor="photo"
+              className="col-sm-2 col-form-label"
+            >
+              Upload Photo
+              
+            </label>
+            <DragDrop setPhoto={props.setPhoto}/>
           </div>
           <button
             type="submit"
