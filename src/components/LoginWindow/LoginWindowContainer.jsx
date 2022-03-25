@@ -27,15 +27,33 @@ const LoginWindowContainer = () => {
       toast.warn("Field 'Name' is mandatory");
       setName("");
     } else {
-      const  reader = new FileReader();
-      reader.onload = (e) => {
-        dispatch(createUserThunk({ name, username: email, password, photo:e.target.result }))
-        console.log(e.target.result);
-      };
-      reader.onerror = (e) => {
-        console.log("Error : " + e.type);
-      };
-      reader.readAsBinaryString(photo)
+      if(e.target.result){
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          dispatch(
+            createUserThunk({
+              name,
+              username: email,
+              password,
+              photo: "data:image/jpeg;base64," + btoa(e.target.result)
+            })
+          );
+        };
+        reader.onerror = (e) => {
+          console.log("Error : " + e.type);
+        };
+        reader.readAsBinaryString(photo);
+      }
+      else {
+        dispatch(
+          createUserThunk({
+            name,
+            username: email,
+            password
+          })
+        );
+      }
+      
     }
   };
   return (

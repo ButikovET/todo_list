@@ -42,9 +42,9 @@ const todoSlice = createSlice({
             ? { ...el, ...action.payload.changes }
             : el;
         });
-        newTaskArray.sort(function(a,b){
-          return new Date(b.updatedAt) - new Date(a.updatedAt)
-        })
+        newTaskArray.sort(function (a, b) {
+          return new Date(b.updatedAt) - new Date(a.updatedAt);
+        });
         state.todoItems = newTaskArray;
       })
       .addCase(deleteTaskThunk.fulfilled, (state, action) => {
@@ -82,9 +82,9 @@ const todoSlice = createSlice({
         state.loginFailed = false;
         state.totalPages = 1;
       })
-      .addCase(updateUserThunk.fulfilled, (state, action) =>{
+      .addCase(updateUserThunk.fulfilled, (state, action) => {
         state.name = action.payload.name;
-      })
+      });
   },
 });
 
@@ -181,8 +181,10 @@ export const loginUserThunk = createAsyncThunk(
   async ({ username, password }) => {
     try {
       const response = await loginAPI.logIn(username, password);
-      localStorage.setItem('todo_photo', 'data:image/jpeg;base64,'+ btoa(response.data.photo));
-      localStorage.setItem('todo_cropped_photo', 'data:image/jpeg;base64,'+ btoa(response.data.croppedPhoto));
+      localStorage.setItem("todo_photo", response.data.photo);
+      response.data.croppedPhoto &&
+        localStorage.setItem("todo_cropped_photo", response.data.croppedPhoto);
+        console.log(response.data)
       return response.data;
     } catch (error) {
       toast.error("Oops... Email of password are incorrect. Please try again");
@@ -195,6 +197,8 @@ export const logOutUserThunk = createAsyncThunk(
   async () => {
     try {
       await loginAPI.logOut();
+      localStorage.removeItem("todo_photo");
+      localStorage.removeItem("todo_cropped_photo");
     } catch (error) {
       toast.error("Can not log out, server error: " + error);
       throw new Error("Server error, can not log out");
@@ -206,7 +210,12 @@ export const createUserThunk = createAsyncThunk(
   "todos/createUserThunk",
   async ({ name, username, password, photo }) => {
     try {
-      const response = await usersAPI.createUser(name, username, password, photo);
+      const response = await usersAPI.createUser(
+        name,
+        username,
+        password,
+        photo
+      );
       toast.success(
         "Dear " +
           name +
@@ -235,16 +244,16 @@ export const createUserThunk = createAsyncThunk(
 );
 
 export const updateUserThunk = createAsyncThunk(
-  'todos/updateUserThunk',
+  "todos/updateUserThunk",
   async (updates) => {
     try {
       const response = await usersAPI.updateUser(updates);
-      toast.success('Your data updated successfully')
-      return response.data
+      toast.success("Your data updated successfully");
+      return response.data;
     } catch (error) {
-      toast.err('Can not update data, server error')
+      toast.err("Can not update data, server error");
     }
   }
-)
+);
 
 export default todoSlice.reducer;

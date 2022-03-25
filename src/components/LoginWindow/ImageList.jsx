@@ -90,7 +90,7 @@ const itemData = [
   {
     img: "https://picsum.photos/200?randoom=11",
     title: "Sea star",
-    rows: 2,
+    cols: 2,
   },
   {
     img: "https://picsum.photos/200?randoom=12",

@@ -44,7 +44,6 @@ export const usersAPI = {
         return axios.post(usersURL, {name, username, password, photo});
     },
     updateUser(updates){
-        console.log(updates)
         return axios.patch(usersURL, {...updates});
     }
 }

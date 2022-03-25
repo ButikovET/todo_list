@@ -3,14 +3,18 @@ import { FileUploader } from "react-drag-drop-files";
 
 const fileTypes = ["JPG", "JPEG", "PNG", "GIF"];
 
-function DragDrop({setPhoto, editMode, loadNewPhoto}) {
+function DragDrop({ setPhoto, editMode, loadNewPhoto }) {
   const handleChange = (file) => {
-      console.log(file)
     setPhoto(file);
-    if(editMode)loadNewPhoto(file)
+    if (editMode) loadNewPhoto(file);
   };
   return (
-    <FileUploader className="dragdrop" handleChange={handleChange} name="file" types={fileTypes} />
+    <FileUploader
+      className="dragdrop"
+      handleChange={handleChange}
+      name="file"
+      types={fileTypes}
+    />
   );
 }
 
